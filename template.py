@@ -62,10 +62,16 @@ _ISO_FIX = {0xFE80:0x0621, 0xFE81:0x0622, 0xFE83:0x0623, 0xFE85:0x0624, 0xFE87:0
 def adir(t): return "rtl" if AR_RE.search(t) else "ltr"
 
 def shape(t):
-    """مسار بدون raqm: وصل الحروف + إصلاح المعزولة + ترتيب RTL."""
+    """مسار بدون raqm: وصل الحروف + إصلاح المعزولة + ترتيب RTL.
+    نُجبر الاتجاه الأساسي على RTL حتى لو بدأ النص بكلمة لاتينية (مثل اسم لاعب)،
+    وإلا تعكس bidi ترتيب المقاطع (FIDE … Buettner بدل Buettner … FIDE)."""
     if not t or not AR_RE.search(t):
         return t
-    return get_display(arabic_reshaper.reshape(t).translate(_ISO_FIX))
+    reshaped = arabic_reshaper.reshape(t).translate(_ISO_FIX)
+    try:
+        return get_display(reshaped, base_dir="R")
+    except TypeError:                 # توافق مع إصدارات python-bidi الأقدم
+        return get_display(reshaped)
 
 _fc = {}
 def font(path, size):
