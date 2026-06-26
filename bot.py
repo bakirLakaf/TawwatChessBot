@@ -245,7 +245,51 @@ async def deliver_news(context, token, ar, en, auto=False, event=None, category=
 
 
 # ---------------- مهمة الأخبار ----------------
-async def check_news_job(context: ContextTypes.DEFAULT_TYPE, force=False):
+async def _process_article(context, art):
+    """يصوغ خبرًا (عربي + إنجليزي)، يبني البطاقتين، ويرسله للموافقة/النشر.
+    يعيد True إن نجح. يُعلّم الخبر مرئيًا حتى لا يتكرّر تلقائيًا."""
+    try:
+        data_ar = await asyncio.to_thread(rewriter.to_arabic, art)
+    except Exception as e:
+        log.warning("فشل صياغة '%s': %s", art["title"][:40], e)
+        return False
+    data_en = None
+    try:
+        data_en = await asyncio.to_thread(rewriter.to_english, art)
+    except Exception as e:
+        log.warning("فشل النسخة الإنجليزية لـ '%s': %s", art["title"][:40], e)
+
+    final_cat = _resolve_category(data_ar.get("category"), bool(art.get("arab_hits")))
+    data_ar["category"] = final_cat
+    if data_en:
+        data_en["category"] = final_cat
+
+    token = uuid.uuid4().hex[:12]
+    src_img = await asyncio.to_thread(_download_image, art.get("image"))
+    try:
+        card_ar = await asyncio.to_thread(_make_news_card, data_ar, src_img, token, "ar")
+    except Exception as e:
+        log.warning("فشل توليد البطاقة: %s", e)
+        return False
+    cap_ar = rewriter.build_caption(art, data_ar, "ar")
+
+    en_pack = None
+    if data_en:
+        try:
+            card_en = await asyncio.to_thread(_make_news_card, data_en, src_img, token + "_en", "en")
+            en_pack = (card_en, rewriter.build_caption(art, data_en, "en"))
+        except Exception as e:
+            log.warning("فشل البطاقة الإنجليزية: %s", e)
+
+    db.mark_seen(art["hash"], art["title"])
+    await deliver_news(context, token, (card_ar, cap_ar), en_pack,
+                       auto=config.AUTO_PUBLISH, event=data_ar.get("event"),
+                       category=final_cat, breaking=bool(art.get("breaking")))
+    return True
+
+
+async def check_news_job(context: ContextTypes.DEFAULT_TYPE, force=False, announce_empty=False):
+    """الفحص الدوري/اليدوي: يلتقط الأخبار الجديدة فقط (يمنع التكرار)."""
     if not force and db.get_state("news_paused", "0") == "1":
         log.info("فحص الأخبار متوقّف مؤقتًا (من لوحة التحكم).")
         return
@@ -254,52 +298,36 @@ async def check_news_job(context: ContextTypes.DEFAULT_TYPE, force=False):
         articles = await asyncio.to_thread(news_sources.fetch_new, config.MAX_POSTS_PER_CHECK)
     except Exception as e:
         log.warning("فشل جلب الأخبار: %s", e)
+        if announce_empty:
+            await context.bot.send_message(ADMIN, "تعذّر جلب الأخبار الآن.")
         return
     if not articles:
         log.info("لا أخبار جديدة.")
+        if announce_empty:
+            await context.bot.send_message(
+                ADMIN, "📭 لا أخبار جديدة حاليًا (كلها سبق التقاطها). "
+                       "لإنشاء منشور خبر فورًا استعمل: 📝 إنشاء منشور ← 📰 خبر الآن.")
         return
     for art in articles:
-        # النسخة العربية (أساسية)
-        try:
-            data_ar = await asyncio.to_thread(rewriter.to_arabic, art)
-        except Exception as e:
-            log.warning("فشل صياغة '%s': %s", art["title"][:40], e)
-            continue
-        # النسخة الإنجليزية (اختيارية — لا نُسقِط الخبر إن فشلت)
-        data_en = None
-        try:
-            data_en = await asyncio.to_thread(rewriter.to_english, art)
-        except Exception as e:
-            log.warning("فشل النسخة الإنجليزية لـ '%s': %s", art["title"][:40], e)
-
-        # حسم الهوية النهائية حسب التصنيف ووجود لاعب عربي (تُطبَّق على النسختين)
-        final_cat = _resolve_category(data_ar.get("category"), bool(art.get("arab_hits")))
-        data_ar["category"] = final_cat
-        if data_en:
-            data_en["category"] = final_cat
-
-        token = uuid.uuid4().hex[:12]
-        src_img = await asyncio.to_thread(_download_image, art.get("image"))
-        try:
-            card_ar = await asyncio.to_thread(_make_news_card, data_ar, src_img, token, "ar")
-        except Exception as e:
-            log.warning("فشل توليد البطاقة: %s", e)
-            continue
-        cap_ar = rewriter.build_caption(art, data_ar, "ar")
-
-        en_pack = None
-        if data_en:
-            try:
-                card_en = await asyncio.to_thread(_make_news_card, data_en, src_img, token + "_en", "en")
-                en_pack = (card_en, rewriter.build_caption(art, data_en, "en"))
-            except Exception as e:
-                log.warning("فشل البطاقة الإنجليزية: %s", e)
-
-        db.mark_seen(art["hash"], art["title"])
-        await deliver_news(context, token, (card_ar, cap_ar), en_pack,
-                           auto=config.AUTO_PUBLISH, event=data_ar.get("event"),
-                           category=final_cat, breaking=bool(art.get("breaking")))
+        await _process_article(context, art)
     log.info("انتهى فحص الأخبار.")
+
+
+async def _post_latest_news(context):
+    """عند الطلب (زر «خبر الآن»): أحدث خبر مناسب حتى لو سبق نشره."""
+    try:
+        articles = await asyncio.to_thread(news_sources.fetch_new, 5, True)  # ignore_seen
+    except Exception as e:
+        log.warning("فشل جلب الأخبار: %s", e)
+        await context.bot.send_message(ADMIN, "تعذّر جلب الأخبار الآن.")
+        return
+    if not articles:
+        await context.bot.send_message(ADMIN, "تعذّر إيجاد خبر مناسب الآن (قد تكون المصادر متعذّرة).")
+        return
+    # فضّل خبرًا لم يُنشَر بعد؛ وإلا خذ الأحدث
+    art = next((a for a in articles if not db.is_seen(a["hash"])), articles[0])
+    if not await _process_article(context, art):
+        await context.bot.send_message(ADMIN, "تعذّر تجهيز الخبر (مشكلة في الصياغة). جرّب مجددًا.")
 
 
 # ---------------- تنظيف البطاقات القديمة (منع امتلاء القرص) ----------------
@@ -412,7 +440,7 @@ def _schedule_text():
 async def _gen_content(context, ctype, difficulty=None):
     """يولّد محتوى من نوع محدّد ويرسله للموافقة (للأزرار التفاعلية)."""
     if ctype == "news":
-        await check_news_job(context, force=True)
+        await _post_latest_news(context)     # عند الطلب: أحدث خبر فورًا
         return
     if ctype == "puzzle":
         res = await asyncio.to_thread(content.make_puzzle, difficulty)
@@ -490,7 +518,7 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await q.edit_message_text("⚙️ لوحة التحكم:", reply_markup=_control_keyboard())
         elif token == "checknews":
             await q.edit_message_text("📰 جارٍ فحص الأخبار…", reply_markup=_back_main_kb())
-            await check_news_job(context, force=True)
+            await check_news_job(context, force=True, announce_empty=True)
         return
 
     # إنشاء منشور من تصنيف
@@ -686,7 +714,7 @@ async def cmd_check(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not _is_admin(update):
         return
     await update.message.reply_text("جارٍ فحص الأخبار…")
-    await check_news_job(context, force=True)
+    await check_news_job(context, force=True, announce_empty=True)
 
 
 async def cmd_control(update: Update, context: ContextTypes.DEFAULT_TYPE):

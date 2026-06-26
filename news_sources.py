@@ -133,11 +133,11 @@ def _sort_key(art):
             art.get("published") or 0)
 
 
-def fetch_new(limit):
-    """يعيد أهمّ الأخبار الجديدة (غير المرئية، وغير القديمة) حتى الحد limit.
+def fetch_new(limit, ignore_seen=False):
+    """يعيد أهمّ الأخبار حتى الحد limit (مرتّبة: عاجل ← عرب ← عالميون ← الأحدث).
 
-    يتجاهل الأخبار الأقدم من NEWS_MAX_AGE_HOURS، ويرتّب: العاجل ← العرب ←
-    العالميون ← الأحدث. الأخبار الأقلّ أولوية تبقى مرشّحة للدورات التالية."""
+    افتراضيًا يتجاهل المرئية سابقًا والقديمة. مع ignore_seen=True يُرجِع أحدث
+    الأخبار حتى لو سبق نشرها (لزرّ «خبر الآن» عند الطلب)."""
     now = time.time()
     max_age = config.NEWS_MAX_AGE_HOURS * 3600
     candidates = []
@@ -155,11 +155,12 @@ def fetch_new(limit):
             if not link:
                 continue
             h = hashlib.sha1(link.encode("utf-8")).hexdigest()
-            if db.is_seen(h):
+            if not ignore_seen and db.is_seen(h):
                 continue
             published = _published_epoch(entry)
             if published and (now - published) > max_age:
-                db.mark_seen(h, "(قديم)")     # نعلّمه مرئيًا حتى لا نفحصه مجددًا
+                if not ignore_seen:
+                    db.mark_seen(h, "(قديم)")  # نعلّمه مرئيًا حتى لا نفحصه مجددًا
                 continue
             title = _clean(entry.get("title", ""))
             summary = _clean(entry.get("summary", ""))[:1200]

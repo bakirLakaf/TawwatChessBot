@@ -92,10 +92,8 @@ def make_puzzle(difficulty=None):
             p = cand
             break
         p = p or cand                       # احتفظ بآخر مرشّح كحلّ أخير
-    if not p:                               # احتياط: لغز اليوم (نقطة نهاية مستقرّة)
-        d = lichess_puzzle.get_daily_puzzle()
-        if d and not db.is_seen("puzzle:" + d["id"]):
-            p = d
+    if not p:                               # احتياط: لغز اليوم (مستقرّ) — حتى لو سبق
+        p = lichess_puzzle.get_daily_puzzle()
     if not p:
         return None
     db.mark_seen("puzzle:" + p["id"], "puzzle")
