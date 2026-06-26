@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+tawwat_bot.db
+cards/*.jpg
+cards/*.png

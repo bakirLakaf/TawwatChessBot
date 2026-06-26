@@ -1,0 +1,811 @@
+[
+ {
+  "name": "Magnus Carlsen",
+  "aliases": [
+   "Magnus Carlsen",
+   "Carlsen",
+   "كارلسن",
+   "ماغنوس كارلسن"
+  ]
+ },
+ {
+  "name": "Fabiano Caruana",
+  "aliases": [
+   "Fabiano Caruana",
+   "Caruana",
+   "كاروانا",
+   "فابيانو كاروانا"
+  ]
+ },
+ {
+  "name": "Hikaru Nakamura",
+  "aliases": [
+   "Hikaru Nakamura",
+   "Nakamura",
+   "ناكامورا",
+   "هيكارو ناكامورا"
+  ]
+ },
+ {
+  "name": "Javokhir Sindarov",
+  "aliases": [
+   "Javokhir Sindarov",
+   "Sindarov",
+   "سينداروف"
+  ]
+ },
+ {
+  "name": "Nodirbek Abdusattorov",
+  "aliases": [
+   "Nodirbek Abdusattorov",
+   "Abdusattorov",
+   "عبد الستاروف",
+   "نوديربيك عبد الستاروف"
+  ]
+ },
+ {
+  "name": "Vincent Keymer",
+  "aliases": [
+   "Vincent Keymer",
+   "Keymer",
+   "كايمر"
+  ]
+ },
+ {
+  "name": "Anish Giri",
+  "aliases": [
+   "Anish Giri",
+   "Giri",
+   "جيري",
+   "أنيش جيري"
+  ]
+ },
+ {
+  "name": "Arjun Erigaisi",
+  "aliases": [
+   "Arjun Erigaisi",
+   "Erigaisi Arjun",
+   "Erigaisi",
+   "إريغايسي",
+   "أرجون إريغايسي"
+  ]
+ },
+ {
+  "name": "Wesley So",
+  "aliases": [
+   "Wesley So",
+   "ويسلي سو"
+  ]
+ },
+ {
+  "name": "Wei Yi",
+  "aliases": [
+   "Wei Yi",
+   "وي يي"
+  ]
+ },
+ {
+  "name": "Alireza Firouzja",
+  "aliases": [
+   "Alireza Firouzja",
+   "Firouzja",
+   "فيروزجا",
+   "عليرضا فيروزجا"
+  ]
+ },
+ {
+  "name": "Hans Moke Niemann",
+  "aliases": [
+   "Hans Moke Niemann",
+   "Niemann",
+   "نيمان"
+  ]
+ },
+ {
+  "name": "Viswanathan Anand",
+  "aliases": [
+   "Viswanathan Anand",
+   "Anand",
+   "أناند",
+   "فيشواناثان أناند"
+  ]
+ },
+ {
+  "name": "Jan-Krzysztof Duda",
+  "aliases": [
+   "Jan-Krzysztof Duda",
+   "Duda",
+   "دودا"
+  ]
+ },
+ {
+  "name": "Ding Liren",
+  "aliases": [
+   "Ding Liren",
+   "دينغ ليرين"
+  ]
+ },
+ {
+  "name": "Praggnanandhaa",
+  "aliases": [
+   "Praggnanandhaa",
+   "براغناناندا",
+   "براغ"
+  ]
+ },
+ {
+  "name": "Ian Nepomniachtchi",
+  "aliases": [
+   "Ian Nepomniachtchi",
+   "Nepomniachtchi",
+   "نيبومنياتشي",
+   "إيان نيبو"
+  ]
+ },
+ {
+  "name": "Leinier Dominguez Perez",
+  "aliases": [
+   "Leinier Dominguez Perez",
+   "Dominguez Perez",
+   "دومينغيز"
+  ]
+ },
+ {
+  "name": "Gukesh",
+  "aliases": [
+   "Gukesh",
+   "غوكيش",
+   "دومماراجو غوكيش"
+  ]
+ },
+ {
+  "name": "Le Quang Liem",
+  "aliases": [
+   "Le Quang Liem",
+   "لي كوانغ ليم"
+  ]
+ },
+ {
+  "name": "Richard Rapport",
+  "aliases": [
+   "Richard Rapport",
+   "Rapport",
+   "رابورت"
+  ]
+ },
+ {
+  "name": "Jorden Van Foreest",
+  "aliases": [
+   "Jorden Van Foreest",
+   "Van Foreest",
+   "فان فوريست"
+  ]
+ },
+ {
+  "name": "Levon Aronian",
+  "aliases": [
+   "Levon Aronian",
+   "Aronian",
+   "أرونيان",
+   "ليفون أرونيان"
+  ]
+ },
+ {
+  "name": "Nihal Sarin",
+  "aliases": [
+   "Nihal Sarin",
+   "Sarin",
+   "نيهال سارين"
+  ]
+ },
+ {
+  "name": "Maxime Vachier-Lagrave",
+  "aliases": [
+   "Maxime Vachier-Lagrave",
+   "Vachier-Lagrave",
+   "فاشييه لاغراف",
+   "ماكسيم فاشييه لاغراف"
+  ]
+ },
+ {
+  "name": "Shakhriyar Mamedyarov",
+  "aliases": [
+   "Shakhriyar Mamedyarov",
+   "Mamedyarov",
+   "محمد ياروف",
+   "شهريار محمد ياروف"
+  ]
+ },
+ {
+  "name": "M. Amin Tabatabaei",
+  "aliases": [
+   "M. Amin Tabatabaei",
+   "Tabatabaei",
+   "طباطبائي"
+  ]
+ },
+ {
+  "name": "Yu Yangyi",
+  "aliases": [
+   "Yu Yangyi",
+   "يو يانغي"
+  ]
+ },
+ {
+  "name": "Yagiz Kaan Erdogmus",
+  "aliases": [
+   "Yagiz Kaan Erdogmus",
+   "Erdogmus",
+   "إردوغموش"
+  ]
+ },
+ {
+  "name": "Dmitry Andreikin",
+  "aliases": [
+   "Dmitry Andreikin",
+   "Andreikin",
+   "أندريكين"
+  ]
+ },
+ {
+  "name": "Santosh Gujrathi Vidit",
+  "aliases": [
+   "Santosh Gujrathi Vidit",
+   "Vidit",
+   "فيديت",
+   "فيديت غوجراتي"
+  ]
+ },
+ {
+  "name": "Parham Maghsoodloo",
+  "aliases": [
+   "Parham Maghsoodloo",
+   "Maghsoodloo",
+   "مقصودلو"
+  ]
+ },
+ {
+  "name": "Vladimir Fedoseev",
+  "aliases": [
+   "Vladimir Fedoseev",
+   "Fedoseev",
+   "فيدوسيف"
+  ]
+ },
+ {
+  "name": "Awonder Liang",
+  "aliases": [
+   "Awonder Liang",
+   "Liang"
+  ]
+ },
+ {
+  "name": "Samuel Sevian",
+  "aliases": [
+   "Samuel Sevian",
+   "Sevian",
+   "سيفيان"
+  ]
+ },
+ {
+  "name": "Veselin Topalov",
+  "aliases": [
+   "Veselin Topalov",
+   "Topalov",
+   "توبالوف",
+   "فيسيلين توبالوف"
+  ]
+ },
+ {
+  "name": "Matthias Bluebaum",
+  "aliases": [
+   "Matthias Bluebaum",
+   "Bluebaum",
+   "بلوباوم"
+  ]
+ },
+ {
+  "name": "Chithambaram Aravindh",
+  "aliases": [
+   "Chithambaram Aravindh",
+   "Aravindh",
+   "أرافيند"
+  ]
+ },
+ {
+  "name": "Teimour Radjabov",
+  "aliases": [
+   "Teimour Radjabov",
+   "Radjabov",
+   "رجبوف",
+   "تيمور رجبوف"
+  ]
+ },
+ {
+  "name": "Nodirbek Yakubboev",
+  "aliases": [
+   "Nodirbek Yakubboev",
+   "Yakubboev",
+   "يعقوبوف"
+  ]
+ },
+ {
+  "name": "Andrey Esipenko",
+  "aliases": [
+   "Andrey Esipenko",
+   "Esipenko",
+   "إيسيبينكو"
+  ]
+ },
+ {
+  "name": "Wang Hao",
+  "aliases": [
+   "Wang Hao",
+   "وانغ هاو"
+  ]
+ },
+ {
+  "name": "Peter Svidler",
+  "aliases": [
+   "Peter Svidler",
+   "Svidler",
+   "سفيدلر"
+  ]
+ },
+ {
+  "name": "Pentala Harikrishna",
+  "aliases": [
+   "Pentala Harikrishna",
+   "Harikrishna",
+   "هاريكريشنا"
+  ]
+ },
+ {
+  "name": "Peter Leko",
+  "aliases": [
+   "Peter Leko",
+   "ليكو"
+  ]
+ },
+ {
+  "name": "Igor Kovalenko",
+  "aliases": [
+   "Igor Kovalenko",
+   "Kovalenko",
+   "كوفالينكو"
+  ]
+ },
+ {
+  "name": "Alexey Sarana",
+  "aliases": [
+   "Alexey Sarana",
+   "Sarana",
+   "سارانا"
+  ]
+ },
+ {
+  "name": "Nikita Vitiugov",
+  "aliases": [
+   "Nikita Vitiugov",
+   "Vitiugov",
+   "فيتيوغوف"
+  ]
+ },
+ {
+  "name": "David Howell",
+  "aliases": [
+   "David Howell",
+   "Howell",
+   "هاول"
+  ]
+ },
+ {
+  "name": "Rustam Kasimdzhanov",
+  "aliases": [
+   "Rustam Kasimdzhanov",
+   "Kasimdzhanov",
+   "قاسمجانوف"
+  ]
+ },
+ {
+  "name": "Aydin Suleymanli",
+  "aliases": [
+   "Aydin Suleymanli",
+   "Suleymanli",
+   "سليمانلي"
+  ]
+ },
+ {
+  "name": "Pavel Eljanov",
+  "aliases": [
+   "Pavel Eljanov",
+   "Eljanov",
+   "إلجانوف"
+  ]
+ },
+ {
+  "name": "Murali Karthikeyan",
+  "aliases": [
+   "Murali Karthikeyan",
+   "Karthikeyan",
+   "كارثيكيان"
+  ]
+ },
+ {
+  "name": "Pranav",
+  "aliases": [
+   "Pranav",
+   "براناف"
+  ]
+ },
+ {
+  "name": "Bu Xiangzhi",
+  "aliases": [
+   "Bu Xiangzhi",
+   "بو شيانغجي"
+  ]
+ },
+ {
+  "name": "Frederik Svane",
+  "aliases": [
+   "Frederik Svane",
+   "Svane",
+   "سفانه"
+  ]
+ },
+ {
+  "name": "David Anton Guijarro",
+  "aliases": [
+   "David Anton Guijarro",
+   "Anton Guijarro",
+   "أنطون غيخارو"
+  ]
+ },
+ {
+  "name": "Bogdan-Daniel Deac",
+  "aliases": [
+   "Bogdan-Daniel Deac",
+   "Deac",
+   "دياك"
+  ]
+ },
+ {
+  "name": "Kirill Alekseenko",
+  "aliases": [
+   "Kirill Alekseenko",
+   "Alekseenko",
+   "ألكسينكو"
+  ]
+ },
+ {
+  "name": "Jeffery Xiong",
+  "aliases": [
+   "Jeffery Xiong",
+   "Xiong",
+   "شيونغ"
+  ]
+ },
+ {
+  "name": "Alexander Morozevich",
+  "aliases": [
+   "Alexander Morozevich",
+   "Morozevich",
+   "موروزيفيتش"
+  ]
+ },
+ {
+  "name": "Ray Robson",
+  "aliases": [
+   "Ray Robson",
+   "Robson",
+   "روبسون"
+  ]
+ },
+ {
+  "name": "Haik Martirosyan",
+  "aliases": [
+   "Haik Martirosyan",
+   "Martirosyan",
+   "مارتيروسيان"
+  ]
+ },
+ {
+  "name": "Jose Eduardo Martinez Alcantara",
+  "aliases": [
+   "Jose Eduardo Martinez Alcantara",
+   "Martinez Alcantara",
+   "مارتينيز"
+  ]
+ },
+ {
+  "name": "Volodar Murzin",
+  "aliases": [
+   "Volodar Murzin",
+   "Murzin",
+   "مورزين"
+  ]
+ },
+ {
+  "name": "Radoslaw Wojtaszek",
+  "aliases": [
+   "Radoslaw Wojtaszek",
+   "Wojtaszek",
+   "فويتاشيك"
+  ]
+ },
+ {
+  "name": "Daniil Dubov",
+  "aliases": [
+   "Daniil Dubov",
+   "Dubov",
+   "دوبوف",
+   "دانييل دوبوف"
+  ]
+ },
+ {
+  "name": "Eltaj Safarli",
+  "aliases": [
+   "Eltaj Safarli",
+   "Safarli",
+   "صفرلي"
+  ]
+ },
+ {
+  "name": "Johan-Sebastian Christiansen",
+  "aliases": [
+   "Johan-Sebastian Christiansen",
+   "Christiansen",
+   "كريستيانسن"
+  ]
+ },
+ {
+  "name": "Nils Grandelius",
+  "aliases": [
+   "Nils Grandelius",
+   "Grandelius",
+   "غرانديليوس"
+  ]
+ },
+ {
+  "name": "Sam Shankland",
+  "aliases": [
+   "Sam Shankland",
+   "Shankland",
+   "شانكلاند"
+  ]
+ },
+ {
+  "name": "Pranesh",
+  "aliases": [
+   "Pranesh",
+   "برانيش"
+  ]
+ },
+ {
+  "name": "Maksim Chigaev",
+  "aliases": [
+   "Maksim Chigaev",
+   "Chigaev",
+   "تشيغايف"
+  ]
+ },
+ {
+  "name": "Shant Sargsyan",
+  "aliases": [
+   "Shant Sargsyan",
+   "Sargsyan",
+   "سركسيان"
+  ]
+ },
+ {
+  "name": "Francisco Vallejo Pons",
+  "aliases": [
+   "Francisco Vallejo Pons",
+   "Vallejo Pons",
+   "فاييخو"
+  ]
+ },
+ {
+  "name": "Grigoriy Oparin",
+  "aliases": [
+   "Grigoriy Oparin",
+   "Oparin",
+   "أوبارين"
+  ]
+ },
+ {
+  "name": "Vladislav Artemiev",
+  "aliases": [
+   "Vladislav Artemiev",
+   "Artemiev",
+   "أرتيميف"
+  ]
+ },
+ {
+  "name": "Ernesto Inarkiev",
+  "aliases": [
+   "Ernesto Inarkiev",
+   "Inarkiev",
+   "إناركييف"
+  ]
+ },
+ {
+  "name": "Ediz Gurel",
+  "aliases": [
+   "Ediz Gurel",
+   "Gurel",
+   "غوريل"
+  ]
+ },
+ {
+  "name": "Aryan Tari",
+  "aliases": [
+   "Aryan Tari",
+   "آريان تاري"
+  ]
+ },
+ {
+  "name": "Alexander Donchenko",
+  "aliases": [
+   "Alexander Donchenko",
+   "Donchenko",
+   "دونشينكو"
+  ]
+ },
+ {
+  "name": "Salem Saleh",
+  "aliases": [
+   "Salem Saleh",
+   "Saleh Salem",
+   "A.R. Saleh",
+   "سالم صالح",
+   "صالح سالم"
+  ]
+ },
+ {
+  "name": "David Navara",
+  "aliases": [
+   "David Navara",
+   "Navara",
+   "نافارا"
+  ]
+ },
+ {
+  "name": "Gawain Maroroa Jones",
+  "aliases": [
+   "Gawain Maroroa Jones",
+   "Maroroa Jones",
+   "غاوين جونز"
+  ]
+ },
+ {
+  "name": "Andy Woodward",
+  "aliases": [
+   "Andy Woodward",
+   "Woodward",
+   "وودوارد"
+  ]
+ },
+ {
+  "name": "Abhimanyu Mishra",
+  "aliases": [
+   "Abhimanyu Mishra",
+   "Mishra",
+   "ميشرا",
+   "أبهيمانيو ميشرا"
+  ]
+ },
+ {
+  "name": "Raunak Sadhwani",
+  "aliases": [
+   "Raunak Sadhwani",
+   "Sadhwani",
+   "سادواني"
+  ]
+ },
+ {
+  "name": "Aryan Chopra",
+  "aliases": [
+   "Aryan Chopra",
+   "Chopra",
+   "آريان تشوبرا"
+  ]
+ },
+ {
+  "name": "Shamsiddin Vokhidov",
+  "aliases": [
+   "Shamsiddin Vokhidov",
+   "Vokhidov",
+   "فوخيدوف"
+  ]
+ },
+ {
+  "name": "Loek Van Wely",
+  "aliases": [
+   "Loek Van Wely",
+   "Van Wely",
+   "فان ويلي"
+  ]
+ },
+ {
+  "name": "Rauf Mamedov",
+  "aliases": [
+   "Rauf Mamedov",
+   "Mamedov",
+   "رؤوف محمدوف"
+  ]
+ },
+ {
+  "name": "Benjamin Gledura",
+  "aliases": [
+   "Benjamin Gledura",
+   "Gledura",
+   "غليدورا"
+  ]
+ },
+ {
+  "name": "Boris Gelfand",
+  "aliases": [
+   "Boris Gelfand",
+   "Gelfand",
+   "جيلفاند",
+   "بوريس جيلفاند"
+  ]
+ },
+ {
+  "name": "Aram Hakobyan",
+  "aliases": [
+   "Aram Hakobyan",
+   "Hakobyan",
+   "هاكوبيان"
+  ]
+ },
+ {
+  "name": "Lu Shanglei",
+  "aliases": [
+   "Lu Shanglei",
+   "لو شانغلي"
+  ]
+ },
+ {
+  "name": "Ivan Cheparinov",
+  "aliases": [
+   "Ivan Cheparinov",
+   "Cheparinov",
+   "تشيبارينوف"
+  ]
+ },
+ {
+  "name": "Dmitrij Kollars",
+  "aliases": [
+   "Dmitrij Kollars",
+   "Kollars",
+   "كولارز"
+  ]
+ },
+ {
+  "name": "Nikolas Theodorou",
+  "aliases": [
+   "Nikolas Theodorou",
+   "Theodorou",
+   "ثيودورو"
+  ]
+ },
+ {
+  "name": "Vasyl Ivanchuk",
+  "aliases": [
+   "Vasyl Ivanchuk",
+   "Ivanchuk",
+   "إيفانتشوك",
+   "فاسيلي إيفانتشوك"
+  ]
+ },
+ {
+  "name": "Thai Dai Van Nguyen",
+  "aliases": [
+   "Thai Dai Van Nguyen",
+   "Nguyen",
+   "نغوين"
+  ]
+ }
+]
