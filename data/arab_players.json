@@ -292,5 +292,126 @@
    "Mohamed Twati",
    "محمد التواتي"
   ]
+ },
+ {
+  "name": "Samy Shoker",
+  "country": "Egypt",
+  "aliases": [
+   "Samy Shoker",
+   "Shoker",
+   "سامي شوكر"
+  ]
+ },
+ {
+  "name": "Imed Abdelnabbi",
+  "country": "Egypt",
+  "aliases": [
+   "Imed Abdelnabbi",
+   "Abdelnabbi",
+   "عماد عبد النبي"
+  ]
+ },
+ {
+  "name": "Hamed Wafa",
+  "country": "Egypt",
+  "aliases": [
+   "Hamed Wafa",
+   "حامد وفا"
+  ]
+ },
+ {
+  "name": "Adham Kandil",
+  "country": "Egypt",
+  "aliases": [
+   "Adham Kandil",
+   "Kandil",
+   "أدهم قنديل"
+  ]
+ },
+ {
+  "name": "Ahmed Kandil",
+  "country": "Egypt",
+  "aliases": [
+   "Ahmed Kandil",
+   "أحمد قنديل"
+  ]
+ },
+ {
+  "name": "Youssef El Ghazali",
+  "country": "Egypt",
+  "aliases": [
+   "Youssef El Ghazali",
+   "El Ghazali",
+   "يوسف الغزالي"
+  ]
+ },
+ {
+  "name": "Abdalrahman Sameh",
+  "country": "Egypt",
+  "aliases": [
+   "Abdalrahman Sameh",
+   "عبد الرحمن سامح"
+  ]
+ },
+ {
+  "name": "Shereif Ashraf",
+  "country": "Egypt",
+  "aliases": [
+   "Shereif Ashraf",
+   "شريف أشرف"
+  ]
+ },
+ {
+  "name": "Salah Yousry",
+  "country": "Egypt",
+  "aliases": [
+   "Salah Yousry",
+   "Yousry",
+   "صلاح يسري"
+  ]
+ },
+ {
+  "name": "Joy Romany",
+  "country": "Egypt",
+  "aliases": [
+   "Joy Romany",
+   "جوي روماني"
+  ]
+ },
+ {
+  "name": "Jana Mohamed Zaki",
+  "country": "Egypt",
+  "aliases": [
+   "Jana Mohamed Zaki",
+   "Jana Zaki",
+   "جنى محمد زكي"
+  ]
+ },
+ {
+  "name": "Lina Nassr",
+  "country": "Algeria",
+  "aliases": [
+   "Lina Nassr",
+   "Nassr",
+   "لينا ناصر"
+  ]
+ },
+ {
+  "name": "Zoubaier Amdouni",
+  "country": "Tunisia",
+  "aliases": [
+   "Zoubaier Amdouni",
+   "Amdouni",
+   "زبير العمدوني"
+  ]
+ },
+ {
+  "name": "Yousef Alhassadi",
+  "country": "Libya",
+  "aliases": [
+   "Yousef Alhassadi",
+   "Alhassadi",
+   "يوسف الحصادي"
+  ]
  }
 ]
