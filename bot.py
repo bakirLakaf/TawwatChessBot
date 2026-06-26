@@ -36,6 +36,9 @@ import notify
 import players
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+# كتم سجلّات المكتبات المزعجة — والأهمّ: httpx يطبع رابط الطلب وفيه توكن البوت!
+for _noisy in ("httpx", "httpcore", "apscheduler", "telegram.ext.Application"):
+    logging.getLogger(_noisy).setLevel(logging.WARNING)
 log = logging.getLogger("tawwat")
 
 ADMIN = config.TELEGRAM_ADMIN_CHAT_ID
