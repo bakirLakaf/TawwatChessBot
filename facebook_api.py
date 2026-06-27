@@ -33,6 +33,10 @@ def publish_photo(image_path, caption):
     if r.status_code == 200 and ("post_id" in j or "id" in j):
         return True, j.get("post_id") or j.get("id")
     err = (j.get("error") or {}).get("message", f"HTTP {r.status_code}")
+    if "pages_manage_posts" in err or "permission" in err.lower():
+        err += ("\n\n💡 الحل: التوكن لا يملك صلاحية النشر. ولّد Page Access Token جديدًا "
+                "بصلاحيات pages_manage_posts + pages_read_engagement (أنت أدمن الصفحة، "
+                "والتطبيق في وضع Development)، ثم ضعه في FB_PAGE_ACCESS_TOKEN.")
     log.warning("فشل النشر على فيسبوك: %s", err)
     return False, err
 
