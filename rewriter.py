@@ -187,6 +187,38 @@ def to_english(article):
     return _generate(article, SYSTEM_EN, "en")
 
 
+SYSTEM_MANUAL = """أنت محرّر صفحة "Tawwat Chess". يرسل إليك المستخدم نصًّا خامًا، فأعد صياغته إلى منشور عربي احترافي بأسلوب الصفحة.
+
+قواعد:
+- حافظ على معنى نصّ المستخدم؛ لا تخترع معلومات أو أرقامًا أو نتائج غير موجودة فيه.
+- أسماء اللاعبين والبطولات بحروفها اللاتينية كما وردت (Magnus Carlsen، Norway Chess…).
+- العربية واللاتينية فقط — ممنوع أي حرف صيني/سيريلي. عربية فصحى مدقّقة.
+- نبرة حماسية محترمة، وأبرِز اللاعبين العرب إن وردوا.
+
+أعد JSON فقط بالمفاتيح:
+{
+  "title": "عنوان قصير قوي 3-6 كلمات",
+  "body": "سطران إلى أربعة أسطر تنتهي بسؤال تفاعلي",
+  "hashtags": ["وسم1", "وسم2", "وسم3"],
+  "event": "اسم الحدث/الموضوع باختصار (أو فارغ)",
+  "category": "result | tournament | historical | interview | statement | obituary | opening | general"
+}"""
+
+
+def rewrite_manual(text):
+    """يعيد صياغة نصّ خام يرسله المستخدم إلى منشور احترافي (title/body/hashtags/event/category)."""
+    data = _extract_json(_complete(SYSTEM_MANUAL, text))
+    data["title"] = _sanitize(data.get("title") or text[:60])
+    data["body"] = _sanitize(data.get("body") or "")
+    data["event"] = _sanitize((data.get("event") or "").strip())
+    data["category"] = (data.get("category") or "general").strip().lower()
+    hh = data.get("hashtags") or []
+    if isinstance(hh, str):
+        hh = [hh]
+    data["hashtags"] = [_sanitize(str(h)) for h in hh if _sanitize(str(h))]
+    return data
+
+
 def build_caption(article, data, lang="ar"):
     """تركيب نص المنشور النهائي لفيسبوك (العنوان + التفاصيل + الوسوم + المصدر)."""
     hashtags = list(data.get("hashtags", []))
@@ -199,6 +231,7 @@ def build_caption(article, data, lang="ar"):
         parts.append(data["body"].strip())
     if tags:
         parts.append(tags)
-    parts.append((f"🔗 المصدر: {article['source']}") if lang == "ar"
-                 else (f"🔗 Source: {article['source']}"))
+    if article.get("source"):   # المصدر اختياري (المنشور اليدوي بلا مصدر)
+        parts.append((f"🔗 المصدر: {article['source']}") if lang == "ar"
+                     else (f"🔗 Source: {article['source']}"))
     return "\n\n".join(parts)

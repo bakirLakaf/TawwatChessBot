@@ -79,6 +79,12 @@ def set_caption(token, caption):
         c.execute("UPDATE pending SET caption=? WHERE token=?", (caption, token))
 
 
+def set_comment(token, comment):
+    """نص التعليق الأول (يُنشَر تلقائيًا تحت منشور فيسبوك)."""
+    with _conn() as c:
+        c.execute("UPDATE pending SET comment=? WHERE token=?", (comment, token))
+
+
 def set_images(token, image_path, alt_image_path=None):
     """تحديث صورة المنشور (وصورة النسخة البديلة إن مُرِّرت)."""
     with _conn() as c:

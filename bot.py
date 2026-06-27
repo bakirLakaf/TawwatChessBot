@@ -87,16 +87,16 @@ def _download_image(url):
     return None
 
 
-# هوية بصرية حسب موضوع الخبر: (شارة عربية/إنجليزية، لون، نمط خلفية)
+# هوية بصرية حسب موضوع الخبر: شارة ولون مميّزان، والخلفية ثابتة = شطرنج مائل (diag)
 NEWS_THEMES = {
-    "result":          {"ar": "نتائج",        "en": "Results",     "color": (201, 162, 75),  "bg": "star"},
+    "result":          {"ar": "نتائج",        "en": "Results",     "color": (201, 162, 75),  "bg": "diag"},
     "tournament":      {"ar": "بطولة",        "en": "Tournament",  "color": (192, 70, 55),   "bg": "diag"},
-    "historical":      {"ar": "ذكريات",       "en": "Memories",    "color": (150, 110, 200), "bg": "diamond"},
-    "interview":       {"ar": "حوار",         "en": "Interview",   "color": (74, 120, 176),  "bg": "hex"},
-    "statement":       {"ar": "تصريح",        "en": "Statement",   "color": (60, 150, 150),  "bg": "hex"},
-    "obituary":        {"ar": "تأبين",        "en": "In Memoriam", "color": (130, 130, 130), "bg": "plain"},
-    "opening":         {"ar": "افتتاح",       "en": "Opening",     "color": (46, 139, 111),  "bg": "hex"},
-    "arab_achievement": {"ar": "إنجاز عربي",  "en": "Arab Win",    "color": (46, 160, 100),  "bg": "star"},
+    "historical":      {"ar": "ذكريات",       "en": "Memories",    "color": (150, 110, 200), "bg": "diag"},
+    "interview":       {"ar": "حوار",         "en": "Interview",   "color": (74, 120, 176),  "bg": "diag"},
+    "statement":       {"ar": "تصريح",        "en": "Statement",   "color": (60, 150, 150),  "bg": "diag"},
+    "obituary":        {"ar": "تأبين",        "en": "In Memoriam", "color": (130, 130, 130), "bg": "diag"},
+    "opening":         {"ar": "افتتاح",       "en": "Opening",     "color": (46, 139, 111),  "bg": "diag"},
+    "arab_achievement": {"ar": "إنجاز عربي",  "en": "Arab Win",    "color": (46, 160, 100),  "bg": "diag"},
     "arab_general":    {"ar": "أخبار عربية",  "en": "Arab News",   "color": (201, 162, 75),  "bg": "diag"},
     "world_general":   {"ar": "أخبار عالمية", "en": "World News",  "color": (201, 162, 75),  "bg": "diag"},
 }
@@ -126,15 +126,16 @@ def _make_news_card(data, local_img, token, lang="ar"):
 
 
 def _keyboard(token):
-    return InlineKeyboardMarkup([[
-        InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}"),
-        InlineKeyboardButton("✏️ تعديل", callback_data=f"edit:{token}"),
-        InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}"),
-    ]])
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}"),
+         InlineKeyboardButton("✏️ تعديل", callback_data=f"edit:{token}")],
+        [InlineKeyboardButton("💬 تعليق أول", callback_data=f"cmt:{token}"),
+         InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}")],
+    ])
 
 
 def _news_keyboard(token, lang="ar", has_alt=True):
-    """لوحة أزرار الأخبار: نشر + تبديل اللغة (إن وُجدت نسخة بديلة) + تعديل نص/صورة/حذف."""
+    """لوحة أزرار الأخبار: نشر + تبديل اللغة + تعديل نص/صورة + تعليق أول + حذف."""
     top = [InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}")]
     if has_alt:
         other = "🇬🇧 English" if lang == "ar" else "🇸🇦 العربية"
@@ -142,9 +143,9 @@ def _news_keyboard(token, lang="ar", has_alt=True):
     return InlineKeyboardMarkup([top,
         [InlineKeyboardButton("✏️ تعديل النص", callback_data=f"edit:{token}"),
          InlineKeyboardButton("🖼️ الصورة", callback_data=f"img:{token}")],
-        [
-        InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}"),
-    ]])
+        [InlineKeyboardButton("💬 تعليق أول", callback_data=f"cmt:{token}"),
+         InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}")],
+    ])
 
 
 def _preview(caption):
@@ -168,6 +169,17 @@ def _in_post_window():
     """هل نحن ضمن نافذة النشر التلقائي (بتوقيت الجزائر)؟"""
     h = datetime.datetime.now(ZoneInfo(config.TIMEZONE)).hour
     return config.POST_WINDOW_START <= h < config.POST_WINDOW_END
+
+
+def _fmt_date(epoch):
+    """تاريخ الخبر بصيغة مقروءة بتوقيت الجزائر، أو '' إن غاب."""
+    if not epoch:
+        return ""
+    try:
+        dt = datetime.datetime.fromtimestamp(epoch, ZoneInfo(config.TIMEZONE))
+        return dt.strftime("%Y-%m-%d %H:%M")
+    except Exception:
+        return ""
 
 
 def _card_title(caption):
@@ -217,7 +229,7 @@ async def deliver(context, image_path, caption, comment=None, auto=False, label=
 
 
 async def deliver_news(context, token, ar, en, auto=False, event=None, category=None,
-                       breaking=False):
+                       breaking=False, published=None):
     """خبر ثنائي اللغة: يخزّن النسختين ويرسل رسالة موافقة واحدة فيها زر تبديل اللغة.
     ينشر تلقائيًا فقط ضمن نافذة النشر — إلا إن كان عاجلًا فيُنشَر فورًا."""
     img_ar, cap_ar = ar
@@ -236,7 +248,14 @@ async def deliver_news(context, token, ar, en, auto=False, event=None, category=
         await context.bot.send_message(
             ADMIN, "✅ نُشر تلقائيًا (خبر)." if ok else f"❌ فشل النشر (خبر): {info}")
         return
-    note = "🔴 عاجل — " if breaking else ""
+    # سطر معلومات يراه المشرف فقط (التاريخ + عاجل) — لا يدخل نصّ المنشور
+    info_parts = []
+    if breaking:
+        info_parts.append("🔴 عاجل")
+    d = _fmt_date(published)
+    if d:
+        info_parts.append("🗓️ " + d)
+    note = (" · ".join(info_parts) + "\n\n") if info_parts else ""
     try:
         await _send_news_for_approval(context.bot, token, img_ar, cap_ar, "ar",
                                       has_alt=bool(en), note=note)
@@ -284,7 +303,8 @@ async def _process_article(context, art):
     db.mark_seen(art["hash"], art["title"])
     await deliver_news(context, token, (card_ar, cap_ar), en_pack,
                        auto=config.AUTO_PUBLISH, event=data_ar.get("event"),
-                       category=final_cat, breaking=bool(art.get("breaking")))
+                       category=final_cat, breaking=bool(art.get("breaking")),
+                       published=art.get("published"))
     return True
 
 
@@ -397,6 +417,7 @@ def _main_menu():
 
 def _create_menu():
     return InlineKeyboardMarkup([
+        [InlineKeyboardButton("✍️ منشور يدوي", callback_data="manual:start")],
         [InlineKeyboardButton("📰 خبر الآن", callback_data="gen:news")],
         [InlineKeyboardButton("🧩 لغز", callback_data="gen:puzzle"),
          InlineKeyboardButton("💡 حكمة", callback_data="gen:wisdom")],
@@ -451,6 +472,30 @@ async def _gen_content(context, ctype, difficulty=None):
         return
     img, caption, comment = res
     await deliver(context, img, caption, comment, auto=False, label=ctype)
+
+
+async def _post_manual(context, text, src_img):
+    """منشور يدوي: يعيد صياغة نصّ المستخدم باحترافية ويبني بطاقة بصورته."""
+    try:
+        data = await asyncio.to_thread(rewriter.rewrite_manual, text)
+    except Exception as e:
+        log.warning("فشل صياغة المنشور اليدوي: %s", e)
+        await context.bot.send_message(ADMIN, "تعذّرت صياغة النص (مشكلة في محرّك الصياغة). جرّب مجددًا.")
+        return
+    world, arab = players.classify(text + " " + (data.get("body") or ""))
+    final_cat = _resolve_category(data.get("category"), bool(arab))
+    data["category"] = final_cat
+    token = uuid.uuid4().hex[:12]
+    try:
+        card = await asyncio.to_thread(_make_news_card, data, src_img, token, "ar")
+    except Exception as e:
+        log.warning("فشل بطاقة المنشور اليدوي: %s", e)
+        await context.bot.send_message(ADMIN, "تعذّر توليد البطاقة. جرّب صورة أخرى.")
+        return
+    art = {"source": "", "arab_hits": arab, "world_hits": world}
+    caption = rewriter.build_caption(art, data, "ar")
+    await deliver_news(context, token, (card, caption), None, auto=False,
+                       event=data.get("event"), category=final_cat)
 
 
 # ---------------- لوحة التحكم ----------------
@@ -543,6 +588,13 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await _gen_content(context, "puzzle", difficulty=diff)
         return
 
+    # بدء المنشور اليدوي
+    if action == "manual":
+        context.bot_data["awaiting_manual"] = "text"
+        context.bot_data["manual_text"] = None
+        await q.edit_message_text("✍️ أرسل نصّ المنشور، وسأعيد صياغته باحترافية بأسلوب الصفحة.")
+        return
+
     # بقية الأزرار تخصّ منشورًا معلّقًا
     p = db.get_pending(token)
     if not p:
@@ -554,9 +606,21 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ok, info = await asyncio.to_thread(_do_publish, p["image_path"], p["caption"], p.get("comment"))
         db.set_status(token, "published" if ok else "failed")
         await q.edit_message_caption(base + ("\n\n✅ تم النشر على فيسبوك" if ok else f"\n\n❌ فشل: {info}"))
+        if ok:  # رابط المنشور لمشاركته يدويًا في مجموعاتك (فيسبوك لا يتيح النشر الآلي للمجموعات)
+            link = f"https://www.facebook.com/{info}"
+            await context.bot.send_message(
+                ADMIN, f"🔗 رابط المنشور — شاركه في مجموعاتك:\n{link}",
+                disable_web_page_preview=False)
     elif action == "del":
         db.set_status(token, "discarded")
         await q.edit_message_caption(base + "\n\n🗑️ تم الحذف.")
+    elif action == "cmt":
+        context.bot_data["awaiting_comment"] = token
+        cur = p.get("comment")
+        hint = f"\n\n(التعليق الحالي: {cur})" if cur else ""
+        await context.bot.send_message(
+            ADMIN, "💬 أرسل الآن نص التعليق الأول (يُنشَر تحت المنشور تلقائيًا)."
+                   " أرسل «حذف» لإزالته." + hint)
     elif action == "lang":
         new_lang = db.swap_pending_lang(token)
         if not new_lang:
@@ -576,11 +640,21 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def on_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """استقبال صورة جديدة لتعديل صورة منشور خبر."""
-    if not _is_admin(update):
+    """استقبال صورة: للمنشور اليدوي، أو لتعديل صورة منشور خبر."""
+    if not _is_admin(update) or not update.message.photo:
+        return
+    # صورة المنشور اليدوي
+    if context.bot_data.get("awaiting_manual") == "image":
+        context.bot_data["awaiting_manual"] = None
+        body = context.bot_data.get("manual_text") or ""
+        src = os.path.join(CARDS_DIR, f"up_{uuid.uuid4().hex[:8]}.jpg")
+        tgfile = await context.bot.get_file(update.message.photo[-1].file_id)
+        await tgfile.download_to_drive(src)
+        await update.message.reply_text("جارٍ تجهيز المنشور…")
+        await _post_manual(context, body, src)
         return
     token = context.bot_data.get("awaiting_image")
-    if not token or not update.message.photo:
+    if not token:
         return
     context.bot_data["awaiting_image"] = None
     p = db.get_pending(token)
@@ -606,7 +680,39 @@ async def on_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.bot_data["awaiting_edit"] = None
         context.bot_data["awaiting_tournament"] = False
         context.bot_data["awaiting_image"] = None
+        context.bot_data["awaiting_comment"] = None
+        context.bot_data["awaiting_manual"] = None
         await MENU_ACTIONS[text](update, context)
+        return
+    # تدفّق المنشور اليدوي
+    manual = context.bot_data.get("awaiting_manual")
+    if manual == "text":
+        context.bot_data["manual_text"] = text
+        context.bot_data["awaiting_manual"] = "image"
+        await update.message.reply_text(
+            "📷 أرسل الآن الصورة التي تريدها للمنشور، أو أرسل «بدون» لمنشور بلا صورة.")
+        return
+    if manual == "image":
+        context.bot_data["awaiting_manual"] = None
+        body = context.bot_data.get("manual_text") or text
+        if text not in ("بدون", "بدونها", "-", "skip"):
+            await update.message.reply_text("أرسل صورة، أو «بدون». سأكمل بلا صورة الآن.")
+        await update.message.reply_text("جارٍ تجهيز المنشور…")
+        await _post_manual(context, body, None)
+        return
+    # تدفّق ضبط التعليق الأول
+    cmt_token = context.bot_data.get("awaiting_comment")
+    if cmt_token:
+        context.bot_data["awaiting_comment"] = None
+        p = db.get_pending(cmt_token)
+        if not p:
+            await update.message.reply_text("انتهت صلاحية هذا المنشور.")
+            return
+        new_comment = None if text in ("حذف", "delete", "-") else text
+        db.set_comment(cmt_token, new_comment)
+        await update.message.reply_text(
+            "تم حذف التعليق الأول." if new_comment is None
+            else "تم ضبط التعليق الأول ✅ (سيُنشَر تلقائيًا تحت المنشور).")
         return
     # تدفّق تعديل صورة المنشور برابط
     img_token = context.bot_data.get("awaiting_image")
