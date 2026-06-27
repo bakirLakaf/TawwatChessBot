@@ -79,6 +79,12 @@ def check():
     missing = []
     if not TELEGRAM_BOT_TOKEN:
         missing.append("TELEGRAM_BOT_TOKEN")
+    elif TELEGRAM_BOT_TOKEN.startswith("EAA") or ":" not in TELEGRAM_BOT_TOKEN:
+        # توكن تيليجرام صيغته «أرقام:حروف»؛ توكن فيسبوك يبدأ بـ EAA
+        missing.append("TELEGRAM_BOT_TOKEN يبدو خاطئًا (ربما وضعتَ توكن فيسبوك مكانه! "
+                       "توكن تيليجرام من @BotFather صيغته «123456:ABC...»)")
     if not TELEGRAM_ADMIN_CHAT_ID:
         missing.append("TELEGRAM_ADMIN_CHAT_ID")
+    if FB_PAGE_ACCESS_TOKEN and not FB_PAGE_ACCESS_TOKEN.startswith("EAA"):
+        missing.append("FB_PAGE_ACCESS_TOKEN يبدو خاطئًا (توكن فيسبوك يبدأ بـ EAA)")
     return missing
