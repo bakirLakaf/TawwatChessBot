@@ -18,13 +18,28 @@ log = logging.getLogger(__name__)
 _openai_client = None
 _anthropic_client = None
 
+# حروف من كتابات لا مكان لها في منشور عربي/إنجليزي (صيني/ياباني/كوري/سيريلي…)
+# نزيلها دفاعيًا حتى لو أخرجها النموذج المجاني بالخطأ.
+_BAD_SCRIPTS = re.compile(
+    r"[Ѐ-ӿԀ-ԯ"          # سيريلي
+    r"　-ヿ㐀-䶿一-鿿豈-﫿"  # CJK + كانا
+    r"가-힯＀-￯]+")        # هانغول + عرض كامل
+
+
+def _sanitize(t):
+    """يزيل الحروف الصينية/السيريلية ويضبط المسافات."""
+    if not t:
+        return t
+    return re.sub(r"\s{2,}", " ", _BAD_SCRIPTS.sub("", t)).strip()
+
 
 SYSTEM = """أنت محرّر صفحة "Tawwat Chess" على فيسبوك، متخصّص بأخبار الشطرنج العربي والعالمي.
 مهمتك: تحويل خبر شطرنج (بالإنجليزية غالبًا) إلى منشور عربي قصير وجذّاب بأسلوب الصفحة.
 
 قواعد صارمة:
-- استعمل فقط المعلومات الواردة في الخبر. لا تخترع نتائج أو أسماء أو أرقامًا أو تواريخ.
-- إن لم تكن المعلومة مؤكّدة في النص، لا تذكرها إطلاقًا.
+- استعمل فقط المعلومات الواردة في الخبر. لا تخترع نتائج أو أسماء أو أرقامًا أو تواريخ أو أحداثًا.
+- ممنوع منعًا باتًّا إضافة أي معلومة ليست في النص الأصلي (لا نتيجة، لا تقييم، لا مكان، لا تاريخ). إن لم تُذكر، لا تكتبها.
+- إن كان الخبر غامضًا أو ناقصًا، اكتب فقط ما تأكّدتَ منه ولو كان قصيرًا.
 - العربية الفصحى المبسّطة، نبرة حماسية محترمة، وتجنّب أي محتوى مخالف للقيم.
 - اهتمّ بإبراز اللاعبين العرب إن ورد ذكرهم.
 
@@ -35,8 +50,8 @@ SYSTEM = """أنت محرّر صفحة "Tawwat Chess" على فيسبوك، مت
 - ادمج الاسم اللاتيني داخل الجملة العربية مباشرة، مثال: «تأهّل Firouzja إلى النهائي».
 
 جودة اللغة (مهم):
-- عربية سليمة ومدقّقة إملائيًا، بلا أي حروف من لغات أخرى داخل الكلمات العربية (ممنوع منعًا باتًّا الحروف السيريلية مثل и).
-- راجع النص قبل إخراجه وتأكّد من خلوّه من الكلمات المبتورة أو الغريبة.
+- العربية واللاتينية فقط. ممنوع منعًا باتًّا أي حروف صينية أو يابانية أو كورية أو سيريلية (汉字 / カ / и) — لا تستعملها إطلاقًا ولو حرفًا واحدًا.
+- عربية سليمة ومدقّقة إملائيًا، بلا كلمات مبتورة أو غريبة. راجع النص قبل إخراجه.
 
 أعد ردّك بصيغة JSON فقط (بدون أي نص خارجها) بالمفاتيح التالية:
 {
@@ -52,8 +67,9 @@ SYSTEM_EN = """You are the editor of the "Tawwat Chess" Facebook page, covering 
 Your task: turn a chess news item into a short, engaging English post in the page's voice.
 
 Strict rules:
-- Use ONLY the information in the article. Never invent results, names, numbers, or dates.
+- Use ONLY the information in the article. Never invent results, names, numbers, dates, or events.
 - If a detail is not confirmed in the text, do not mention it at all.
+- Use ONLY Latin letters. Absolutely no Chinese/Japanese/Korean/Cyrillic characters.
 - Clear, lively but respectful tone. Keep player and tournament names in their original spelling.
 - Highlight Arab players if they are mentioned.
 
@@ -150,10 +166,14 @@ def _generate(article, system, lang):
     data.setdefault("title", article["title"][:60])
     data.setdefault("body", "")
     data.setdefault("hashtags", [])
-    data["event"] = (data.get("event") or "").strip()
+    # تنقية من الحروف الصينية/السيريلية (وقاية من أخطاء النموذج)
+    data["title"] = _sanitize(data["title"]) or article["title"][:60]
+    data["body"] = _sanitize(data["body"])
+    data["event"] = _sanitize((data.get("event") or "").strip())
     data["category"] = (data.get("category") or "general").strip().lower()
     if isinstance(data["hashtags"], str):
         data["hashtags"] = [data["hashtags"]]
+    data["hashtags"] = [_sanitize(str(h)) for h in data["hashtags"] if _sanitize(str(h))]
     return data
 
 

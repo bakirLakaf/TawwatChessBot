@@ -10,7 +10,7 @@
 لا يحتاج cairo وقت التشغيل (القطع صور PNG جاهزة).
 """
 import os, re, math
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(BASE, "assets")
@@ -166,6 +166,21 @@ def cover(img, w, h):
     l, t = (nw-w)//2, (nh-h)//2
     return img.crop((l, t, l+w, t+h))
 
+def fit_card(img, w, h):
+    """يُظهر الصورة كاملةً (بلا قصّ) داخل إطار w×h، ويملأ الفراغ بخلفية
+    مموّهة معتمة من الصورة نفسها (بلا أشرطة مسطّحة)."""
+    img = img.convert("RGB")
+    bg = cover(img, w, h).filter(ImageFilter.GaussianBlur(20))
+    bg = ImageEnhance.Brightness(bg).enhance(0.45)
+    sr = img.width / img.height; dr = w / h
+    if sr > dr:                       # أعرض من الإطار → عرض كامل
+        nw, nh = w, max(1, round(w / sr))
+    else:                             # أطول من الإطار → ارتفاع كامل
+        nw, nh = max(1, round(h * sr)), h
+    fitted = img.resize((nw, nh), Image.LANCZOS)
+    bg.paste(fitted, ((w - nw) // 2, (h - nh) // 2))
+    return bg
+
 # ---------------- رقعة الشطرنج (قطع PNG) ----------------
 LIGHT_SQ = (235, 214, 176); DARK_SQ = (181, 138, 86)
 _pcache = {}
@@ -243,7 +258,7 @@ def create_post(category, header_label, title, subtitle="", content_image=None,
         d.rounded_rectangle([bx-4, by-4, bx+bw+4, by+bw+4], radius=18, outline=GOLD, width=3)
         img.alpha_composite(board, (bx, by))
     elif content_image and os.path.exists(content_image):
-        photo = rounded(cover(Image.open(content_image), cw, chh), 16)
+        photo = rounded(fit_card(Image.open(content_image), cw, chh), 16)
         d.rounded_rectangle([c_left-3, c_top-3, c_right+3, c_bottom+3], radius=19, outline=head_accent, width=3)
         img.alpha_composite(photo, (c_left, c_top))
     else:
