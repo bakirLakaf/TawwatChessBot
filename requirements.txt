@@ -1,0 +1,12 @@
+python-telegram-bot[job-queue]>=21,<23
+anthropic>=0.40
+openai>=1.30
+feedparser>=6.0
+requests>=2.31
+Pillow>=10.0
+arabic-reshaper>=3.0
+python-bidi>=0.4
+python-dotenv>=1.0
+chess>=1.9
+tzdata>=2024.1
+openpyxl>=3.1

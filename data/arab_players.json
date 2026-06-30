@@ -1,0 +1,417 @@
+[
+ {
+  "name": "Bassem Amin",
+  "country": "Egypt",
+  "aliases": [
+   "Bassem Amin",
+   "بسام أمين",
+   "باسم أمين",
+   "أمين بسام"
+  ]
+ },
+ {
+  "name": "Ahmed Adly",
+  "country": "Egypt",
+  "aliases": [
+   "Ahmed Adly",
+   "Adly",
+   "أحمد عدلي"
+  ]
+ },
+ {
+  "name": "Adham Fawzy",
+  "country": "Egypt",
+  "aliases": [
+   "Adham Fawzy",
+   "Fawzy",
+   "أدهم فوزي"
+  ]
+ },
+ {
+  "name": "Essam El Gindy",
+  "country": "Egypt",
+  "aliases": [
+   "Essam El Gindy",
+   "El Gindy",
+   "عصام الجندي"
+  ]
+ },
+ {
+  "name": "Mohamed Ezat",
+  "country": "Egypt",
+  "aliases": [
+   "Mohamed Ezat",
+   "محمد عزت"
+  ]
+ },
+ {
+  "name": "Abdelrahman Hesham",
+  "country": "Egypt",
+  "aliases": [
+   "Abdelrahman Hesham",
+   "عبد الرحمن هشام"
+  ]
+ },
+ {
+  "name": "Khaled Abdel Razik",
+  "country": "Egypt",
+  "aliases": [
+   "Khaled Abdel Razik",
+   "خالد عبد الرازق"
+  ]
+ },
+ {
+  "name": "Mona Khaled",
+  "country": "Egypt",
+  "aliases": [
+   "Mona Khaled",
+   "منى خالد"
+  ]
+ },
+ {
+  "name": "Shrook Wafa",
+  "country": "Egypt",
+  "aliases": [
+   "Shrook Wafa",
+   "شروق وفا"
+  ]
+ },
+ {
+  "name": "Shahenda Wafa",
+  "country": "Egypt",
+  "aliases": [
+   "Shahenda Wafa",
+   "شاهندة وفا"
+  ]
+ },
+ {
+  "name": "Bilel Bellahcene",
+  "country": "Algeria",
+  "aliases": [
+   "Bilel Bellahcene",
+   "Bellahcene",
+   "بلال بلحسن"
+  ]
+ },
+ {
+  "name": "Mohamed Haddouche",
+  "country": "Algeria",
+  "aliases": [
+   "Mohamed Haddouche",
+   "Haddouche",
+   "محمد حدوش"
+  ]
+ },
+ {
+  "name": "Adlane Arab",
+  "country": "Algeria",
+  "aliases": [
+   "Adlane Arab",
+   "عدلان عرب"
+  ]
+ },
+ {
+  "name": "Aimen Rizouk",
+  "country": "Algeria",
+  "aliases": [
+   "Aimen Rizouk",
+   "Rizouk",
+   "أيمن رزوق"
+  ]
+ },
+ {
+  "name": "Nassim Bardadi",
+  "country": "Algeria",
+  "aliases": [
+   "Nassim Bardadi",
+   "نسيم بردادي"
+  ]
+ },
+ {
+  "name": "Hichem Hamdouchi",
+  "country": "Morocco",
+  "aliases": [
+   "Hichem Hamdouchi",
+   "Hamdouchi",
+   "هشام حمدوشي"
+  ]
+ },
+ {
+  "name": "Mohamed Tissir",
+  "country": "Morocco",
+  "aliases": [
+   "Mohamed Tissir",
+   "Tissir",
+   "محمد التيسير"
+  ]
+ },
+ {
+  "name": "Yassine Aabbou",
+  "country": "Morocco",
+  "aliases": [
+   "Yassine Aabbou",
+   "Aabbou",
+   "ياسين عبو"
+  ]
+ },
+ {
+  "name": "Amir Zaibi",
+  "country": "Tunisia",
+  "aliases": [
+   "Amir Zaibi",
+   "Zaibi",
+   "أمير الزايبي"
+  ]
+ },
+ {
+  "name": "Slim Bouaziz",
+  "country": "Tunisia",
+  "aliases": [
+   "Slim Bouaziz",
+   "Bouaziz",
+   "سليم بوعزيز"
+  ]
+ },
+ {
+  "name": "Slim Belkhodja",
+  "country": "Tunisia",
+  "aliases": [
+   "Slim Belkhodja",
+   "Belkhodja",
+   "سليم بلخوجة"
+  ]
+ },
+ {
+  "name": "Salem Saleh",
+  "country": "UAE",
+  "aliases": [
+   "Salem Saleh",
+   "Saleh Salem",
+   "A.R. Saleh",
+   "صالح سالم"
+  ]
+ },
+ {
+  "name": "Omar Noaman",
+  "country": "UAE",
+  "aliases": [
+   "Omar Noaman",
+   "Noaman",
+   "عمر نعمان"
+  ]
+ },
+ {
+  "name": "Mohamad Al-Modiahki",
+  "country": "Qatar",
+  "aliases": [
+   "Mohamad Al-Modiahki",
+   "Al-Modiahki",
+   "Almodiahki",
+   "محمد المديهكي"
+  ]
+ },
+ {
+  "name": "Husain Aziz",
+  "country": "Qatar",
+  "aliases": [
+   "Husain Aziz Nezad",
+   "حسين عزيز"
+  ]
+ },
+ {
+  "name": "Ahmad Al Khatib",
+  "country": "Jordan",
+  "aliases": [
+   "Ahmad Al Khatib",
+   "Al Khatib",
+   "أحمد الخطيب"
+  ]
+ },
+ {
+  "name": "Hussein Aziz",
+  "country": "Iraq",
+  "aliases": [
+   "Hussein Aziz Nezad",
+   "حسين عزيز نزاد"
+  ]
+ },
+ {
+  "name": "Ahmed Alrehaili",
+  "country": "Saudi Arabia",
+  "aliases": [
+   "Ahmed Abdullah Alrehaili",
+   "Alrehaili",
+   "أحمد الرحيلي"
+  ]
+ },
+ {
+  "name": "Ahmad Skaf",
+  "country": "Syria",
+  "aliases": [
+   "Ahmad Skaf",
+   "أحمد سقّاف"
+  ]
+ },
+ {
+  "name": "Antoine Kassis",
+  "country": "Lebanon",
+  "aliases": [
+   "Antoine Kassis",
+   "Kassis",
+   "أنطوان قسيس"
+  ]
+ },
+ {
+  "name": "Adham Hassoneh",
+  "country": "Palestine",
+  "aliases": [
+   "Adham Hassoneh",
+   "أدهم حسونة"
+  ]
+ },
+ {
+  "name": "Hamad AlmShaibani",
+  "country": "Kuwait",
+  "aliases": [
+   "Hamad Almeshaikhi",
+   "حمد المشيخي"
+  ]
+ },
+ {
+  "name": "Mohamed Ahmed Hussien",
+  "country": "Sudan",
+  "aliases": [
+   "Mohamed Ahmed Hussien",
+   "محمد أحمد حسين"
+  ]
+ },
+ {
+  "name": "Mohamed Twati",
+  "country": "Libya",
+  "aliases": [
+   "Mohamed Twati",
+   "محمد التواتي"
+  ]
+ },
+ {
+  "name": "Samy Shoker",
+  "country": "Egypt",
+  "aliases": [
+   "Samy Shoker",
+   "Shoker",
+   "سامي شوكر"
+  ]
+ },
+ {
+  "name": "Imed Abdelnabbi",
+  "country": "Egypt",
+  "aliases": [
+   "Imed Abdelnabbi",
+   "Abdelnabbi",
+   "عماد عبد النبي"
+  ]
+ },
+ {
+  "name": "Hamed Wafa",
+  "country": "Egypt",
+  "aliases": [
+   "Hamed Wafa",
+   "حامد وفا"
+  ]
+ },
+ {
+  "name": "Adham Kandil",
+  "country": "Egypt",
+  "aliases": [
+   "Adham Kandil",
+   "Kandil",
+   "أدهم قنديل"
+  ]
+ },
+ {
+  "name": "Ahmed Kandil",
+  "country": "Egypt",
+  "aliases": [
+   "Ahmed Kandil",
+   "أحمد قنديل"
+  ]
+ },
+ {
+  "name": "Youssef El Ghazali",
+  "country": "Egypt",
+  "aliases": [
+   "Youssef El Ghazali",
+   "El Ghazali",
+   "يوسف الغزالي"
+  ]
+ },
+ {
+  "name": "Abdalrahman Sameh",
+  "country": "Egypt",
+  "aliases": [
+   "Abdalrahman Sameh",
+   "عبد الرحمن سامح"
+  ]
+ },
+ {
+  "name": "Shereif Ashraf",
+  "country": "Egypt",
+  "aliases": [
+   "Shereif Ashraf",
+   "شريف أشرف"
+  ]
+ },
+ {
+  "name": "Salah Yousry",
+  "country": "Egypt",
+  "aliases": [
+   "Salah Yousry",
+   "Yousry",
+   "صلاح يسري"
+  ]
+ },
+ {
+  "name": "Joy Romany",
+  "country": "Egypt",
+  "aliases": [
+   "Joy Romany",
+   "جوي روماني"
+  ]
+ },
+ {
+  "name": "Jana Mohamed Zaki",
+  "country": "Egypt",
+  "aliases": [
+   "Jana Mohamed Zaki",
+   "Jana Zaki",
+   "جنى محمد زكي"
+  ]
+ },
+ {
+  "name": "Lina Nassr",
+  "country": "Algeria",
+  "aliases": [
+   "Lina Nassr",
+   "Nassr",
+   "لينا ناصر"
+  ]
+ },
+ {
+  "name": "Zoubaier Amdouni",
+  "country": "Tunisia",
+  "aliases": [
+   "Zoubaier Amdouni",
+   "Amdouni",
+   "زبير العمدوني"
+  ]
+ },
+ {
+  "name": "Yousef Alhassadi",
+  "country": "Libya",
+  "aliases": [
+   "Yousef Alhassadi",
+   "Alhassadi",
+   "يوسف الحصادي"
+  ]
+ }
+]
