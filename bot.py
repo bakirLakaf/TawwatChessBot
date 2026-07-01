@@ -11,6 +11,7 @@
 التشغيل: python bot.py   (يحتاج .env معبّأً)
 """
 import os
+import re
 import uuid
 import asyncio
 import logging
@@ -130,24 +131,39 @@ def _make_news_card(data, local_img, token, lang="ar"):
 def _keyboard(token):
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}"),
-         InlineKeyboardButton("✏️ تعديل", callback_data=f"edit:{token}")],
-        [InlineKeyboardButton("💬 تعليق أول", callback_data=f"cmt:{token}"),
-         InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}")],
+         InlineKeyboardButton("⏰ جدولة", callback_data=f"sched:{token}")],
+        [InlineKeyboardButton("✏️ تعديل", callback_data=f"edit:{token}"),
+         InlineKeyboardButton("💬 تعليق أول", callback_data=f"cmt:{token}")],
+        [InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}")],
     ])
 
 
 def _news_keyboard(token, lang="ar", has_alt=True):
-    """لوحة أزرار الأخبار: نشر + تبديل اللغة + تعديل نص/صورة + تعليق أول + حذف."""
-    top = [InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}")]
+    """لوحة أزرار الأخبار: نشر/جدولة + تبديل اللغة + تعديل نص/صورة + تعليق أول + حذف."""
+    rows = [[InlineKeyboardButton("✅ نشر", callback_data=f"pub:{token}"),
+             InlineKeyboardButton("⏰ جدولة", callback_data=f"sched:{token}")]]
     if has_alt:
         other = "🇬🇧 English" if lang == "ar" else "🇸🇦 العربية"
-        top.append(InlineKeyboardButton(other, callback_data=f"lang:{token}"))
-    return InlineKeyboardMarkup([top,
+        rows.append([InlineKeyboardButton(other, callback_data=f"lang:{token}")])
+    rows += [
         [InlineKeyboardButton("✏️ تعديل النص", callback_data=f"edit:{token}"),
          InlineKeyboardButton("🖼️ الصورة", callback_data=f"img:{token}")],
         [InlineKeyboardButton("💬 تعليق أول", callback_data=f"cmt:{token}"),
          InlineKeyboardButton("🗑️ حذف", callback_data=f"del:{token}")],
-    ])
+    ]
+    return InlineKeyboardMarkup(rows)
+
+
+def _scheduled_kb(token):
+    return InlineKeyboardMarkup([[InlineKeyboardButton("❌ إلغاء الجدولة",
+                                                       callback_data=f"unsched:{token}")]])
+
+
+def _pending_keyboard(p, token):
+    """اللوحة المناسبة لمنشور معلّق: لوحة الأخبار إن كان خبرًا، وإلا اللوحة العادية."""
+    if p.get("lang"):
+        return _news_keyboard(token, p.get("lang") or "ar", has_alt=bool(p.get("alt_caption")))
+    return _keyboard(token)
 
 
 def _preview(caption):
@@ -187,6 +203,37 @@ def _fmt_date(epoch):
 def _card_title(caption):
     """عنوان البطاقة = أول سطر/مقطع من نص المنشور."""
     return (caption or "").split("\n\n")[0].split("\n")[0].strip()[:120] or "أخبار الشطرنج"
+
+
+def _parse_when(text):
+    """يفهم وقت الجدولة بتوقيت الجزائر: «21:30» أو «غدا 09:00» أو «2026-07-05 18:00».
+    الوقت الذي فات اليوم يُحمَل على الغد. يعيد datetime واعيًا بالمنطقة أو None."""
+    tz = ZoneInfo(config.TIMEZONE)
+    now = datetime.datetime.now(tz)
+    t = (text or "").strip().replace("：", ":")
+    tomorrow = False
+    for w in ("غدًا", "غداً", "غدا"):
+        if t.startswith(w):
+            tomorrow, t = True, t[len(w):].strip()
+            break
+    m = re.fullmatch(r"(\d{4})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{2})", t)
+    if m:
+        y, mo, d, h, mi = map(int, m.groups())
+        try:
+            dt = datetime.datetime(y, mo, d, h, mi, tzinfo=tz)
+        except ValueError:
+            return None
+        return dt if dt > now else None   # تاريخ كامل في الماضي = خطأ إدخال
+    m = re.fullmatch(r"(\d{1,2}):(\d{2})", t)
+    if m:
+        h, mi = int(m.group(1)), int(m.group(2))
+        if h > 23 or mi > 59:
+            return None
+        dt = now.replace(hour=h, minute=mi, second=0, microsecond=0)
+        if tomorrow or dt <= now:
+            dt += datetime.timedelta(days=1)
+        return dt
+    return None
 
 
 def _regen_news_images(token, src_path):
@@ -375,6 +422,29 @@ async def cleanup_job(context: ContextTypes.DEFAULT_TYPE):
     await asyncio.to_thread(_cleanup_cards, 7)
 
 
+# ---------------- نشر المنشورات المجدولة ----------------
+async def scheduled_posts_job(context: ContextTypes.DEFAULT_TYPE):
+    """كل دقيقة: ينشر على فيسبوك المنشورات المجدولة التي حان وقتها."""
+    try:
+        due = db.due_scheduled(datetime.datetime.now().timestamp())
+    except Exception as e:
+        log.warning("فشل فحص المنشورات المجدولة: %s", e)
+        return
+    for p in due:
+        ok, info = await asyncio.to_thread(_do_publish, p["image_path"], p["caption"],
+                                           p.get("comment"))
+        db.set_status(p["token"], "published" if ok else "failed")
+        title = _card_title(p["caption"])
+        if ok:
+            await context.bot.send_message(
+                ADMIN, f"⏰✅ نُشر المنشور المجدول: {title}\n"
+                       f"🔗 https://www.facebook.com/{info}")
+        else:
+            await context.bot.send_message(
+                ADMIN, f"⏰❌ فشل نشر المنشور المجدول ({title}): {info}\n"
+                       "المنشور ما زال محفوظًا — يمكنك نشره من أزرار رسالته.")
+
+
 # ---------------- المحتوى المجدول ----------------
 def _build_content(ctype):
     if ctype == "puzzle":
@@ -456,8 +526,15 @@ def _schedule_text():
     lines += ["",
               f"🔎 فحص الأخبار: كل {int(config.NEWS_CHECK_MINUTES)} دقيقة",
               f"🕗 نافذة النشر التلقائي: {config.POST_WINDOW_START:02d}:00–{config.POST_WINDOW_END:02d}:00",
-              "🔴 الأخبار العاجلة تُنشَر فورًا خارج النافذة.",
-              "", "(لتعديل المواعيد: SCHEDULE في config.py)"]
+              "🔴 الأخبار العاجلة تُنشَر فورًا خارج النافذة."]
+    sch = db.list_scheduled()
+    if sch:
+        tz = ZoneInfo(config.TIMEZONE)
+        lines += ["", "⏰ منشورات مجدولة يدويًا:"]
+        for p in sch:
+            dt = datetime.datetime.fromtimestamp(p["publish_at"], tz)
+            lines.append(f"• {dt.strftime('%Y-%m-%d %H:%M')} — {_card_title(p['caption'])[:50]}")
+    lines += ["", "(لتعديل المواعيد الأسبوعية: SCHEDULE في config.py)"]
     return "\n".join(lines)
 
 
@@ -521,6 +598,7 @@ def _stats_text():
             f"• أخبار ملتقطة: {s['seen']}\n"
             f"• منشورة: {bs.get('published', 0)}\n"
             f"• بانتظار: {bs.get('pending', 0)}\n"
+            f"• مجدولة: {bs.get('scheduled', 0)}\n"
             f"• محذوفة: {bs.get('discarded', 0)}\n"
             f"• فشلت: {bs.get('failed', 0)}")
 
@@ -623,6 +701,18 @@ async def on_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.send_message(
                 ADMIN, f"🔗 رابط المنشور — شاركه في مجموعاتك:\n{link}",
                 disable_web_page_preview=False)
+    elif action == "sched":
+        context.bot_data["awaiting_schedule"] = token
+        context.bot_data["schedule_msg_id"] = q.message.message_id
+        await context.bot.send_message(
+            ADMIN, "⏰ أرسل وقت النشر (بتوقيت الجزائر):\n"
+                   "• 21:30 — اليوم (وإن فات الوقت فغدًا)\n"
+                   "• غدا 09:00\n"
+                   "• 2026-07-05 18:00")
+    elif action == "unsched":
+        db.unschedule_post(token)
+        await q.edit_message_caption(_preview(p["caption"]) + "\n\n↩️ أُلغيت الجدولة.",
+                                     reply_markup=_pending_keyboard(p, token))
     elif action == "del":
         db.set_status(token, "discarded")
         await q.edit_message_caption(base + "\n\n🗑️ تم الحذف.")
@@ -695,7 +785,35 @@ async def on_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.bot_data["awaiting_comment"] = None
         context.bot_data["awaiting_manual"] = None
         context.bot_data["awaiting_results"] = None
+        context.bot_data["awaiting_schedule"] = None
         await MENU_ACTIONS[text](update, context)
+        return
+    # تدفّق جدولة منشور (بعد ضغط ⏰ جدولة)
+    sched_token = context.bot_data.get("awaiting_schedule")
+    if sched_token:
+        dt = _parse_when(text)
+        if not dt:
+            await update.message.reply_text(
+                "لم أفهم الوقت. أرسله هكذا: 21:30 أو غدا 09:00 أو 2026-07-05 18:00")
+            return
+        context.bot_data["awaiting_schedule"] = None
+        msg_id = context.bot_data.pop("schedule_msg_id", None)
+        p = db.get_pending(sched_token)
+        if not p:
+            await update.message.reply_text("انتهت صلاحية هذا المنشور.")
+            return
+        db.schedule_post(sched_token, dt.timestamp())
+        when = dt.strftime("%Y-%m-%d %H:%M")
+        await update.message.reply_text(
+            f"⏰ تمت الجدولة ✅ — سيُنشَر على فيسبوك في {when} (توقيت الجزائر).")
+        if msg_id:  # نحدّث رسالة المنشور نفسها لتُظهر وقته وزرّ الإلغاء
+            try:
+                await context.bot.edit_message_caption(
+                    chat_id=ADMIN, message_id=msg_id,
+                    caption=_preview(p["caption"]) + f"\n\n⏰ مجدول: {when}",
+                    reply_markup=_scheduled_kb(sched_token))
+            except Exception as e:
+                log.info("تعذّر تحديث رسالة المنشور المجدول: %s", e)
         return
     # تدفّق المنشور اليدوي
     manual = context.bot_data.get("awaiting_manual")
@@ -1063,6 +1181,8 @@ def main():
 
     # جدولة الأخبار (كل NEWS_CHECK_MINUTES دقيقة)
     app.job_queue.run_repeating(check_news_job, interval=config.NEWS_CHECK_MINUTES * 60, first=15)
+    # نشر المنشورات المجدولة يدويًا (زر ⏰ جدولة) — فحص كل دقيقة
+    app.job_queue.run_repeating(scheduled_posts_job, interval=60, first=20)
     # تنظيف يومي للبطاقات القديمة (يمنع امتلاء القرص)
     app.job_queue.run_repeating(cleanup_job, interval=86400, first=3600)
     # جدولة المحتوى الأسبوعي

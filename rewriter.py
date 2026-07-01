@@ -84,34 +84,59 @@ Reply with JSON ONLY (no text outside it), with these keys:
 
 
 def _complete(system, user):
-    """ينفّذ الطلب على المزوّد المفعّل ويعيد نص الرد. يرمي خطأً واضحًا إن لم يُضبط أي مزوّد."""
+    """ينفّذ الطلب ويعيد نص الرد. يجرّب LLM_MODEL ثم الموديلات الاحتياطية
+    (LLM_FALLBACK_MODELS) بالترتيب، وإن فشلت كلها يجرّب Claude إن كان مفتاحه
+    مضبوطًا. الرد الذي لا يحوي JSON صالحًا يُعامَل كفشل وننتقل للموديل التالي."""
     global _openai_client, _anthropic_client
+    errors = []
 
     if config.LLM_API_BASE:  # ===== مزوّد متوافق مع OpenAI (مجاني عادةً) =====
         if _openai_client is None:
             from openai import OpenAI
             _openai_client = OpenAI(base_url=config.LLM_API_BASE, api_key=config.LLM_API_KEY)
-        resp = _openai_client.chat.completions.create(
-            model=config.LLM_MODEL,
-            max_tokens=800,
-            temperature=0.7,
-            messages=[{"role": "system", "content": system},
-                      {"role": "user", "content": user}],
-        )
-        return resp.choices[0].message.content
+        models = []
+        for m in [config.LLM_MODEL] + config.LLM_FALLBACK_MODELS:
+            if m and m not in models:
+                models.append(m)
+        for i, model in enumerate(models):
+            try:
+                resp = _openai_client.chat.completions.create(
+                    model=model,
+                    max_tokens=800,
+                    temperature=0.7,
+                    messages=[{"role": "system", "content": system},
+                              {"role": "user", "content": user}],
+                )
+                text = resp.choices[0].message.content
+                _extract_json(text)   # تحقّق أن الرد قابل للاستعمال قبل اعتماده
+                return text
+            except Exception as e:
+                errors.append(f"{model}: {e}")
+                nxt = models[i + 1] if i + 1 < len(models) else \
+                      (config.CLAUDE_MODEL if config.ANTHROPIC_API_KEY else None)
+                if nxt:
+                    log.warning("فشل الموديل %s (%s) — نجرّب البديل: %s",
+                                model, str(e)[:120], nxt)
 
     if config.ANTHROPIC_API_KEY:  # ===== Claude مباشرة (مدفوع) =====
-        if _anthropic_client is None:
-            from anthropic import Anthropic
-            _anthropic_client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
-        msg = _anthropic_client.messages.create(
-            model=config.CLAUDE_MODEL,
-            max_tokens=800,
-            system=system,
-            messages=[{"role": "user", "content": user}],
-        )
-        return msg.content[0].text
+        try:
+            if _anthropic_client is None:
+                from anthropic import Anthropic
+                _anthropic_client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
+            msg = _anthropic_client.messages.create(
+                model=config.CLAUDE_MODEL,
+                max_tokens=800,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+            )
+            text = msg.content[0].text
+            _extract_json(text)
+            return text
+        except Exception as e:
+            errors.append(f"{config.CLAUDE_MODEL}: {e}")
 
+    if errors:
+        raise RuntimeError("فشلت كل موديلات الصياغة:\n" + "\n".join(errors))
     raise RuntimeError("خدمة إعادة الصياغة غير مضبوطة: املأ LLM_API_BASE/LLM_API_KEY/LLM_MODEL "
                        "أو ANTHROPIC_API_KEY في ملف .env")
 

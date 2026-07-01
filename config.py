@@ -14,7 +14,9 @@ TELEGRAM_ADMIN_CHAT_ID = os.getenv("TELEGRAM_ADMIN_CHAT_ID", "").strip()
 #   إن ضُبط LLM_API_BASE فسيُستعمل هذا المزوّد (له الأولوية).
 LLM_API_BASE = os.getenv("LLM_API_BASE", "").strip()   # مثل https://router.bynara.id/v1
 LLM_API_KEY = os.getenv("LLM_API_KEY", "").strip()
-LLM_MODEL = os.getenv("LLM_MODEL", "").strip()          # مثل mimo-v2.5-free أو gemini-2.5-flash
+LLM_MODEL = os.getenv("LLM_MODEL", "").strip()          # مثل mistral-medium-3-5 أو gemini-2.5-flash
+# موديلات احتياطية تُجرَّب بالترتيب إذا فشل LLM_MODEL (مفصولة بفواصل)
+LLM_FALLBACK_MODELS = [m.strip() for m in os.getenv("LLM_FALLBACK_MODELS", "").split(",") if m.strip()]
 
 # الخيار ب (مدفوع): Claude مباشرة — يُستعمل فقط إذا لم يُضبط LLM_API_BASE.
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()

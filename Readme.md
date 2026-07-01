@@ -34,7 +34,7 @@
 - **محرّك صياغة الأخبار (اختر واحدًا):**
   - *مجاني (مستحسن):* مزوّد متوافق مع OpenAI. املأ `LLM_API_BASE` و`LLM_API_KEY` و`LLM_MODEL`.
     - **Gemini المجاني** (الأكثر موثوقية): مفتاح مجاني من `aistudio.google.com` → `LLM_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai/` و`LLM_MODEL=gemini-2.5-flash`.
-    - **bynara**: مفتاح من `router.bynara.id` → `LLM_API_BASE=https://router.bynara.id/v1` و`LLM_MODEL=mimo-v2.5-free`.
+    - **bynara**: مفتاح من `router.bynara.id` → `LLM_API_BASE=https://router.bynara.id/v1` و`LLM_MODEL=mistral-medium-3-5`.
   - *مدفوع:* `ANTHROPIC_API_KEY` من `console.anthropic.com` (اتركه فارغًا إن استعملت المجاني).
   - ملاحظة: الأخبار فقط تحتاج هذا المحرّك؛ الألغاز/الحكم/النقلات تعمل بدونه.
 - **فيسبوك:** `FB_PAGE_ID` و `FB_PAGE_ACCESS_TOKEN` (توكن الصفحة طويل الأمد، بصلاحيتَي `pages_manage_posts` و `pages_read_engagement`).

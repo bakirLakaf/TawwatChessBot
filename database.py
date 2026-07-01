@@ -30,6 +30,9 @@ def init_db():
         for col in ("alt_image_path", "alt_caption", "lang", "event", "category"):
             if col not in have:
                 c.execute(f"ALTER TABLE pending ADD COLUMN {col} TEXT")
+        # ترقية: وقت النشر المجدول (epoch بالثواني)
+        if "publish_at" not in have:
+            c.execute("ALTER TABLE pending ADD COLUMN publish_at REAL")
 
 
 def _now():
@@ -108,6 +111,36 @@ def swap_pending_lang(token):
                   (r["alt_image_path"], r["alt_caption"],
                    r["image_path"], r["caption"], new_lang, token))
         return new_lang
+
+
+# ---------- الجدولة (نشر مؤجّل إلى فيسبوك) ----------
+def schedule_post(token, publish_at):
+    """يحوّل المنشور إلى مجدول: يُنشَر تلقائيًا على فيسبوك عند حلول وقته (epoch)."""
+    with _conn() as c:
+        c.execute("UPDATE pending SET status='scheduled', publish_at=? WHERE token=?",
+                  (float(publish_at), token))
+
+
+def unschedule_post(token):
+    """يعيد المنشور المجدول إلى حالة الانتظار العادية."""
+    with _conn() as c:
+        c.execute("UPDATE pending SET status='pending', publish_at=NULL WHERE token=?", (token,))
+
+
+def due_scheduled(now_epoch):
+    """المنشورات المجدولة التي حان وقت نشرها."""
+    with _conn() as c:
+        rows = c.execute("SELECT * FROM pending WHERE status='scheduled' AND publish_at<=?",
+                         (float(now_epoch),)).fetchall()
+        return [dict(r) for r in rows]
+
+
+def list_scheduled():
+    """كل المنشورات المجدولة مرتّبة بوقت نشرها (لعرضها في قائمة الجدولة)."""
+    with _conn() as c:
+        rows = c.execute("SELECT * FROM pending WHERE status='scheduled' "
+                         "ORDER BY publish_at").fetchall()
+        return [dict(r) for r in rows]
 
 
 # ---------- إحصاءات ----------

@@ -158,9 +158,10 @@ def fetch_new(limit, ignore_seen=False):
             if not ignore_seen and db.is_seen(h):
                 continue
             published = _published_epoch(entry)
-            if published and (now - published) > max_age:
+            # بلا تاريخ نشر لا يمكن ضمان حداثة الخبر، فيُستبعد كالقديم تمامًا
+            if published is None or (now - published) > max_age:
                 if not ignore_seen:
-                    db.mark_seen(h, "(قديم)")  # نعلّمه مرئيًا حتى لا نفحصه مجددًا
+                    db.mark_seen(h, "(قديم/بلا تاريخ)")  # نعلّمه مرئيًا حتى لا نفحصه مجددًا
                 continue
             title = _clean(entry.get("title", ""))
             summary = _clean(entry.get("summary", ""))[:1200]
